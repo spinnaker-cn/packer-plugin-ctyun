@@ -1,0 +1,47 @@
+{
+  "builders": [
+    {
+      "type": "ctyun-basic",
+      "client_token": "3pf2962c-f92c-4c22-9199-cfbb2218655d",
+      "access_key": "6f4992caea9048f192f4077d1600b59e",
+      "secret_key": "8158e147442a43829fc80a007d507c02",
+
+      "region_id": "bb9fdb42056f11eda1610242ac110002",
+      "az_name": "cn-huadong1-jsnj1A-public-ctcloud",
+      "display_name": "可用区1",
+      "network_card_list": [{"isMaster": true, "subnetID": "subnet-v21cae0q69"}],
+
+      "image_id": "564c68de-184e-4c28-84db-1c5652ebc16a",
+      "instance_name": "application-packer-dbg",
+      "image_type": 1,
+
+      "flavor_id": "34e1b6f6-e974-1575-20b2-172ba0e0bf83",
+      "boot_disk_type": "SATA",
+      "boot_disk_size": 40,
+      "vpc_id": "vpc-zgeqvud612",
+      "ext_ip": "1",
+      "on_demand": false,
+      "root_password":"Packer@135",
+      "band_width":1,
+
+      "ssh_private_key_file":"/data/spinnakerctyun/apps/id_rsa",
+      "key_pair_id":"0c6c6923-a856-9f35-be03-dd10b6b36444",
+      "ssh_keypair_name":"",
+      "communicator":"ssh",
+      "ssh_username": "root",
+      "ssh_password": "Packer@135",
+      "ssh_timeout" : "60s"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 3",
+        "echo 123",
+        "pwd"
+      ]
+    }
+  ]
+}
