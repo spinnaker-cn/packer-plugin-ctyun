@@ -21,6 +21,8 @@ type stepCreateCTyunInstance struct {
 func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 
 	password := s.InstanceSpecConfig.Comm.SSHPassword
+	keyName := s.InstanceSpecConfig.Comm.SSHKeyPairName
+	keyFile := s.InstanceSpecConfig.Comm.SSHPrivateKeyFile
 	s.ui = state.Get("ui").(packersdk.Ui)
 	s.ui.Say("Creating instances")
 
@@ -46,10 +48,12 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 		BandWidth:       &s.InstanceSpecConfig.BandWidth,
 	}
 
-	if len(password) > 0 {
+	if len(password) > 0 && len(keyName) == 0 && len(keyFile) == 0 {
 		instanceSpec.RootPassword = &password
 	}
-
+	if len(keyName) > 0 && len(keyFile) == 0 {
+		instanceSpec.KeyPairID = &keyName
+	}
 	req := apis.NewCreateInstancesRequest(&instanceSpec)
 	resp, err := VmClient.CreateInstances(req)
 
