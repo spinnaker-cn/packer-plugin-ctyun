@@ -75,8 +75,8 @@ type CreateKeypairResult struct {
 	KeyPairName string `json:"keyPairName"`
 
 	/*密钥对的指纹，采用MD5信息摘要算法*/
-	FingerPrint string `json:"privateKey"`
+	FingerPrint string `json:"fingerPrint"`
 
 	/*密钥对的ID*/
-	KeyPairID string `json:"keyPairName"`
+	KeyPairID string `json:"keyPairID"`
 }

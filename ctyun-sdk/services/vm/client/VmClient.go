@@ -179,6 +179,7 @@ func (c *VmClient) CreateKeypair(request *vm.CreateKeypairRequest) (*vm.CreateKe
 	if request == nil {
 		return nil, errors.New("Request object is nil. ")
 	}
+	c.Config.SetEndpoint("ctecs-global.ctapi.ctyun.cn")
 	resp, err := c.Send(request)
 	if err != nil {
 		return nil, err
