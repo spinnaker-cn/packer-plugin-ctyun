@@ -49,7 +49,7 @@ type CreateInstancesRequest struct {
 	ExtIP *string `json:"extIP"`
 
 	/* 本参数表示购买方式 ，取值范围：false（按周期）true（按需），按周期创建云主机需要同时指定cycleCount和cycleType参数 */
-	OnDemand bool `json:"onDemand"`
+	OnDemand *bool `json:"onDemand"`
 
 	/* 订购时长*/
 	CycleCount *int `json:"cycleCount"`
@@ -93,7 +93,7 @@ func NewCreateInstancesRequest(
 		BootDiskSize:    instanceSpec.BootDiskSize,
 		VpcID:           instanceSpec.VpcID,
 		ExtIP:           instanceSpec.ExtIP,
-		OnDemand:        false,
+		OnDemand:        instanceSpec.OnDemand,
 		CycleCount:      &cycleCount,
 		CycleType:       &cycleType,
 		NetworkCardList: instanceSpec.NetworkCardList,

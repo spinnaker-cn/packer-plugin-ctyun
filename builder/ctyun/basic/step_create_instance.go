@@ -20,9 +20,6 @@ type stepCreateCTyunInstance struct {
 
 func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBag) multistep.StepAction {
 
-	password := s.InstanceSpecConfig.Comm.SSHPassword
-	keyName := s.InstanceSpecConfig.Comm.SSHKeyPairName
-	keyFile := s.InstanceSpecConfig.Comm.SSHPrivateKeyFile
 	s.ui = state.Get("ui").(packersdk.Ui)
 	s.ui.Say("Creating instances")
 
@@ -48,21 +45,18 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 		BandWidth:       &s.InstanceSpecConfig.BandWidth,
 	}
 
-	if len(password) > 0 && len(keyName) == 0 && len(keyFile) == 0 {
-		instanceSpec.RootPassword = &password
-	}
-	if len(keyName) > 0 && len(keyFile) == 0 {
-		instanceSpec.KeyPairID = &keyName
-	}
 	req := apis.NewCreateInstancesRequest(&instanceSpec)
 	resp, err := VmClient.CreateInstances(req)
 
 	if err != nil {
 		err := fmt.Errorf("Error creating instance, error-%v ", err)
+		state.Put("error", err)
 		s.ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 	if resp.StatusCode != 800 {
+		error := fmt.Errorf("Error Creating Instance Code Is Not 800")
+		state.Put("error", error)
 		s.ui.Error(fmt.Sprintf(
 			"created instance error, its errorCode=%v , "+
 				"its message=%v, :) ", resp.ErrorCode, resp.Message))
@@ -70,6 +64,8 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 	}
 	insListResponse, err := WaitForExpected(resp.ReturnObj.MasterResourceID)
 	if err != nil {
+		error := fmt.Errorf("Waiting For Instance Id Error")
+		state.Put("error", error)
 		s.ui.Error("query Instance Id error: " + err.Error())
 		return multistep.ActionHalt
 	}
@@ -80,7 +76,9 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 	instanceInterface, err := InstanceStatusRefresher(s.InstanceSpecConfig.InstanceId, []string{VM_CREATING, VM_STARTING, VM_MASTER_ORDER_CREATING}, []string{VM_RUNNING})
 
 	if err != nil {
-		s.ui.Error("waiting Instance status error: " + err.Error())
+		error := fmt.Errorf("Waiting For Instance Status Error")
+		state.Put("error", error)
+		s.ui.Error("Waiting For Instance Status Error: " + err.Error())
 		return multistep.ActionHalt
 	}
 	//返回云主机实例详情
@@ -245,4 +243,18 @@ func connectionError(e error) bool {
 func instanceHost(state multistep.StateBag) (string, error) {
 	return state.Get("floatingIP").(string), nil
 }
-func (s *stepCreateCTyunInstance) Cleanup(state multistep.StateBag) {}
+func (s *stepCreateCTyunInstance) Cleanup(state multistep.StateBag) {
+
+	ui := state.Get("ui").(packersdk.Ui)
+	if state.Get("error") != nil {
+
+		req := apis.DeleteKeypairRequest(Region, s.InstanceSpecConfig.Comm.SSHKeyPairName)
+		resp, err := VmClient.DelKeypair(req)
+		if err != nil || resp.StatusCode != 800 {
+			ui.Error(fmt.Sprintf("[ERROR] Delete KeyPair On Instance Error-%v ,Resp:%v", err, resp))
+		} else {
+			ui.Message("Delete KeyPair On Instance Success")
+		}
+	}
+
+}

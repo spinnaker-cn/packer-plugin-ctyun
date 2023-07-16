@@ -113,15 +113,15 @@ func (ct *CTyunInstanceSpecConfig) Prepare(ctx *interpolate.Context) []error {
 		errs = append(errs, fmt.Errorf("[PRE-FLIGHT] 'vpcID' empty"))
 	}
 
-	noPassword := len(ct.Comm.SSHPassword) == 0
-	noKeys := len(ct.Comm.SSHKeyPairName) == 0 && len(ct.Comm.SSHPrivateKeyFile) == 0
-	noTempKey := len(ct.Comm.SSHTemporaryKeyPairName) == 0
-	if noPassword && noKeys && noTempKey {
-		errs = append(errs, fmt.Errorf("[PRE-FLIGHT] Didn't detect any credentials, you have to specify either "+
-			"{password} or "+
-			"{key_name+local_private_key_path} or "+
-			"{temporary_key_pair_name} cheers :)"))
-	}
+	//noPassword := len(ct.Comm.SSHPassword) == 0
+	//noKeys := len(ct.Comm.SSHKeyPairName) == 0 && len(ct.Comm.SSHPrivateKeyFile) == 0
+	//noTempKey := len(ct.Comm.SSHTemporaryKeyPairName) == 0
+	//if noPassword && noKeys && noTempKey {
+	//	errs = append(errs, fmt.Errorf("[PRE-FLIGHT] Didn't detect any credentials, you have to specify either "+
+	//		"{password} or "+
+	//		"{key_name+local_private_key_path} or "+
+	//		"{temporary_key_pair_name} cheers :)"))
+	//}
 
 	return errs
 }
