@@ -43,6 +43,7 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 		KeyPairID:       &s.InstanceSpecConfig.KeyPairID,
 		RootPassword:    &s.InstanceSpecConfig.RootPassword,
 		BandWidth:       &s.InstanceSpecConfig.BandWidth,
+		SecGroupList:    &s.InstanceSpecConfig.SecGroupList,
 	}
 
 	req := apis.NewCreateInstancesRequest(&instanceSpec)
