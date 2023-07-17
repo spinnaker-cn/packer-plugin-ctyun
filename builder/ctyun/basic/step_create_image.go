@@ -122,5 +122,13 @@ func (s *stepCreateCTyunImage) Cleanup(state multistep.StateBag) {
 	} else {
 		ui.Message("Delete KeyPair On Image Success")
 	}
+	reqDel := apis.NewDelInstanceRequest(Region, s.InstanceSpecConfig.InstanceId, s.InstanceSpecConfig.ClientToken)
+	respDel, errDel := VmClient.DelInstance(reqDel)
+
+	if errDel != nil || respDel.StatusCode != 800 {
+		ui.Error(fmt.Sprintf("[ERROR] Delete Instance On Image Error-%v ,Resp:%v", err, resp))
+	} else {
+		ui.Message("Delete Instance On Image Success")
+	}
 
 }

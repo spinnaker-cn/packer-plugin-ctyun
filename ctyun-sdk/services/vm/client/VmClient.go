@@ -106,6 +106,28 @@ func (c *VmClient) StopInstance(request *vm.StopInstanceRequest) (*vm.StopInstan
 }
 
 /*
+ * 删除一台云主机实例
+ */
+func (c *VmClient) DelInstance(request *vm.DelInstanceRequest) (*vm.DelInstanceResponse, error) {
+	if request == nil {
+		return nil, errors.New("Request object is nil. ")
+	}
+	c.Config.Endpoint = "ctecs-global.ctapi.ctyun.cn"
+	resp, err := c.Send(request)
+	if err != nil {
+		c.Logger.Log(core.LogError, "Del Instance failed, resp: %s", string(resp))
+		return nil, err
+	}
+	var ctResp vm.DelInstanceResponse
+	err = json.Unmarshal(resp, &ctResp)
+	if err != nil {
+		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		return nil, err
+	}
+	return &ctResp, err
+}
+
+/*
  * 查询云主机列表实例
  */
 func (c *VmClient) QueryInstancesList(request *vm.QueryInstancesRequest) (*vm.QueryInstancesResponse, error) {
