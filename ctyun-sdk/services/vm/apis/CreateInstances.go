@@ -49,7 +49,7 @@ type CreateInstancesRequest struct {
 	ExtIP *string `json:"extIP"`
 
 	/* 本参数表示购买方式 ，取值范围：false（按周期）true（按需），按周期创建云主机需要同时指定cycleCount和cycleType参数 */
-	OnDemand bool `json:"onDemand"`
+	OnDemand *bool `json:"onDemand"`
 
 	/* 订购时长*/
 	CycleCount *int `json:"cycleCount"`
@@ -57,9 +57,10 @@ type CreateInstancesRequest struct {
 	/* 本参数表示订购周期类型 ，取值范围：MONTH：按月YEAR：按年最长订购周期为5年*/
 	CycleType *string `json:"cycleType"`
 
-	KeyPairID    *string `json:"keyPairID"`
-	RootPassword *string `json:"rootPassword"`
-	BandWidth    *int    `json:"bandwidth"`
+	KeyPairID    *string   `json:"keyPairID"`
+	RootPassword *string   `json:"rootPassword"`
+	BandWidth    *int      `json:"bandwidth"`
+	SecGroupList *[]string `json:"secGroupList"`
 }
 
 /*
@@ -93,13 +94,14 @@ func NewCreateInstancesRequest(
 		BootDiskSize:    instanceSpec.BootDiskSize,
 		VpcID:           instanceSpec.VpcID,
 		ExtIP:           instanceSpec.ExtIP,
-		OnDemand:        false,
+		OnDemand:        instanceSpec.OnDemand,
 		CycleCount:      &cycleCount,
 		CycleType:       &cycleType,
 		NetworkCardList: instanceSpec.NetworkCardList,
 		KeyPairID:       instanceSpec.KeyPairID,
 		RootPassword:    instanceSpec.RootPassword,
 		BandWidth:       instanceSpec.BandWidth,
+		SecGroupList:    instanceSpec.SecGroupList,
 	}
 }
 

@@ -53,7 +53,8 @@ type InstanceSpec struct {
 	/* 本参数表示订购周期类型 ，取值范围：MONTH：按月YEAR：按年最长订购周期为5年*/
 	CycleType *string `json:"cycleType"`
 
-	KeyPairID    *string `json:"keyPairID"`
-	RootPassword *string `json:"rootPassword"`
-	BandWidth    *int    `json:"bandwidth"`
+	KeyPairID    *string   `json:"keyPairID"`
+	RootPassword *string   `json:"rootPassword"`
+	BandWidth    *int      `json:"bandwidth"`
+	SecGroupList *[]string `json:"secGroupList"`
 }

@@ -21,12 +21,12 @@ func (s *stepValidateParameters) Run(_ context.Context, state multistep.StateBag
 	s.state = state
 	s.ui.Say("Validating parameters...")
 
-	if err := s.ValidateVpcFunc(); err != nil {
+	if err := s.ValidateVpcFunc(state); err != nil {
 		s.ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
 
-	if err := s.ValidateImageFunc(); err != nil {
+	if err := s.ValidateImageFunc(state); err != nil {
 		s.ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
@@ -34,22 +34,25 @@ func (s *stepValidateParameters) Run(_ context.Context, state multistep.StateBag
 	return multistep.ActionContinue
 }
 
-func (s *stepValidateParameters) ValidateVpcFunc() error {
+func (s *stepValidateParameters) ValidateVpcFunc(state multistep.StateBag) error {
 
 	vpcId := s.InstanceSpecConfig.VpcID
-	if len(vpcId) == 0 {
-		s.ui.Message("\t 'vpc' is not specified, we will create a new one for you :) ")
-		return s.CreateRandomVpc()
-	}
+	//if len(vpcId) == 0 {
+	//	s.ui.Message("\t 'vpc' is not specified, we will create a new one for you :) ")
+	//	return s.CreateRandomVpc()
+	//}
 
 	s.ui.Message("\t validating your vpc:" + s.InstanceSpecConfig.VpcID)
 	req := vpc.NewDescribeVpcRequest(Region, vpcId)
 	resp, err := VpcClient.DescribeVpc(req)
 	if err != nil {
-
+		error := fmt.Errorf("Validate Vpc Status Error")
+		state.Put("error", error)
 		return fmt.Errorf("[ERROR] Failed in validating vpc->%s, reasons:%v", vpcId, err)
 	}
 	if resp != nil && resp.StatusCode != 800 {
+		error := fmt.Errorf("Validate Vpc Status Is Not 800")
+		state.Put("error", error)
 		return fmt.Errorf("[ERROR] Something wrong with your vpc->%s, reasons:%v", vpcId, resp.ErrorCode)
 	}
 
@@ -58,16 +61,20 @@ func (s *stepValidateParameters) ValidateVpcFunc() error {
 
 }
 
-func (s *stepValidateParameters) ValidateImageFunc() error {
+func (s *stepValidateParameters) ValidateImageFunc(state multistep.StateBag) error {
 
 	s.ui.Message("\t validating your base image:" + s.InstanceSpecConfig.ImageID)
 	imageId := s.InstanceSpecConfig.ImageID
 	req := vm.NewDescribeImageRequest(s.InstanceSpecConfig.RegionID, imageId)
 	resp, err := VmClient.DescribeImage(req)
 	if err != nil {
+		error := fmt.Errorf("Validate Image Status Error")
+		state.Put("error", error)
 		return fmt.Errorf("[ERROR] Failed in validating your image->%s, reasons:%v", imageId, err)
 	}
 	if resp != nil && resp.StatusCode != 800 {
+		error := fmt.Errorf("Validate Image Status Is Not 800")
+		state.Put("error", error)
 		return fmt.Errorf("[ERROR] Something wrong with your image->%s, reasons:%v", imageId, resp.ErrorCode)
 	}
 

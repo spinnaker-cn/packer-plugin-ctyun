@@ -195,6 +195,29 @@ func (c *VmClient) CreateKeypair(request *vm.CreateKeypairRequest) (*vm.CreateKe
 	return ctResp, err
 }
 
+/*
+ *删除ssh密钥对。
+ */
+func (c *VmClient) DelKeypair(request *vm.DelKeypairRequest) (*vm.DelKeypairResponse, error) {
+	if request == nil {
+		return nil, errors.New("Request object is nil. ")
+	}
+	c.Config.SetEndpoint("ctecs-global.ctapi.ctyun.cn")
+	resp, err := c.Send(request)
+	if err != nil {
+		return nil, err
+	}
+
+	ctResp := &vm.DelKeypairResponse{}
+	err = json.Unmarshal(resp, ctResp)
+	if err != nil {
+		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		return nil, err
+	}
+
+	return ctResp, err
+}
+
 type QueryInstancesResponse struct {
 	/*返回状态码（800为成功，900为失败）*/
 	StatusCode int `json:"statusCode"`

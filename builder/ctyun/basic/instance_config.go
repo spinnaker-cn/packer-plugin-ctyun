@@ -56,9 +56,10 @@ type CTyunInstanceSpecConfig struct {
 	/* 本参数表示订购周期类型 ，取值范围：MONTH：按月YEAR：按年最长订购周期为5年*/
 	CycleType string `mapstructure:"cycle_type"`
 
-	KeyPairID    string `mapstructure:"key_pair_id"`
-	RootPassword string `mapstructure:"root_password"`
-	BandWidth    int    `mapstructure:"band_width"`
+	KeyPairID    string   `mapstructure:"key_pair_id"`
+	RootPassword string   `mapstructure:"root_password"`
+	BandWidth    int      `mapstructure:"band_width"`
+	SecGroupList []string `mapstructure:"server_group_list"`
 
 	Comm         communicator.Config `mapstructure:",squash"`
 	ArtifactId   string
@@ -113,15 +114,15 @@ func (ct *CTyunInstanceSpecConfig) Prepare(ctx *interpolate.Context) []error {
 		errs = append(errs, fmt.Errorf("[PRE-FLIGHT] 'vpcID' empty"))
 	}
 
-	noPassword := len(ct.Comm.SSHPassword) == 0
-	noKeys := len(ct.Comm.SSHKeyPairName) == 0 && len(ct.Comm.SSHPrivateKeyFile) == 0
-	noTempKey := len(ct.Comm.SSHTemporaryKeyPairName) == 0
-	if noPassword && noKeys && noTempKey {
-		errs = append(errs, fmt.Errorf("[PRE-FLIGHT] Didn't detect any credentials, you have to specify either "+
-			"{password} or "+
-			"{key_name+local_private_key_path} or "+
-			"{temporary_key_pair_name} cheers :)"))
-	}
+	//noPassword := len(ct.Comm.SSHPassword) == 0
+	//noKeys := len(ct.Comm.SSHKeyPairName) == 0 && len(ct.Comm.SSHPrivateKeyFile) == 0
+	//noTempKey := len(ct.Comm.SSHTemporaryKeyPairName) == 0
+	//if noPassword && noKeys && noTempKey {
+	//	errs = append(errs, fmt.Errorf("[PRE-FLIGHT] Didn't detect any credentials, you have to specify either "+
+	//		"{password} or "+
+	//		"{key_name+local_private_key_path} or "+
+	//		"{temporary_key_pair_name} cheers :)"))
+	//}
 
 	return errs
 }

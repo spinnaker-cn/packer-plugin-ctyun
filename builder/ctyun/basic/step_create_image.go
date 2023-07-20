@@ -28,8 +28,10 @@ func (s *stepCreateCTyunImage) Run(_ context.Context, state multistep.StateBag) 
 	req := apis.NewCreateImageRequest(imageSpec)
 	resp, err := VmClient.CreateImage(req)
 	if err != nil || resp.StatusCode != 800 {
+		error := fmt.Errorf("Creating image: Error")
+		state.Put("error", error)
 		ui.Error(fmt.Sprintf("[ERROR] Creating image: Error-%v ,Resp:%v", err, resp))
-		fmt.Sprintf("[ERROR] Creating image: Error-%v ,Resp:%v", err, resp)
+
 		return multistep.ActionHalt
 	}
 	s.InstanceSpecConfig.ArtifactId = resp.ReturnObj.Images[0].ImageID
@@ -37,6 +39,8 @@ func (s *stepCreateCTyunImage) Run(_ context.Context, state multistep.StateBag) 
 	_, err = ImageStatusWaiter(resp.ReturnObj.Images[0].ImageID, []string{IM_QUEUED}, []string{READY})
 
 	if err != nil {
+		error := fmt.Errorf("Waiting For Image Status Error")
+		state.Put("error", error)
 		ui.Error(err.Error())
 		return multistep.ActionHalt
 	}
@@ -107,27 +111,16 @@ func imageStatusRefresher(imageId string) StateRefreshFunc {
 	}
 }
 
-// Delete created instance image on error
-// func (s *stepCreateCTyunImage) Cleanup(state multistep.StateBag) {
-//
-//	if s.InstanceSpecConfig.ArtifactId != "" {
-//
-//		req := apis.NewDeleteImageRequest(Region, s.InstanceSpecConfig.ArtifactId)
-//
-//		_ = Retry(time.Minute, func() *RetryError {
-//			_, err := VmClient.DeleteImage(req)
-//			if err == nil {
-//				return nil
-//			}
-//			if connectionError(err) {
-//				return RetryableError(err)
-//			} else {
-//				return NonRetryableError(err)
-//			}
-//		})
-//	}
-//
-// }
 func (s *stepCreateCTyunImage) Cleanup(state multistep.StateBag) {
+
+	ui := state.Get("ui").(packersdk.Ui)
+	req := apis.DeleteKeypairRequest(Region, s.InstanceSpecConfig.Comm.SSHKeyPairName)
+	resp, err := VmClient.DelKeypair(req)
+
+	if err != nil || resp.StatusCode != 800 {
+		ui.Error(fmt.Sprintf("[ERROR] Delete KeyPair On Image Error-%v ,Resp:%v", err, resp))
+	} else {
+		ui.Message("Delete KeyPair On Image Success")
+	}
 
 }
