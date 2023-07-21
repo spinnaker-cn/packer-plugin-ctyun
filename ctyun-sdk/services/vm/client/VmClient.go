@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/core"
 	vm "github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/services/vm/apis"
 )
@@ -55,6 +56,7 @@ func (c *VmClient) CreateImage(request *vm.CreateImageRequest) (*vm.CreateImageR
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("CreateImage Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -70,7 +72,7 @@ func (c *VmClient) CreateInstances(request *vm.CreateInstancesRequest) (*vm.Crea
 	c.Config.Endpoint = "ctecs-global.ctapi.ctyun.cn"
 	resp, err := c.Send(request)
 	if err != nil {
-		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		c.Logger.Log(core.LogError, "Create instances  failed, resp: %s", string(resp))
 		return nil, err
 	}
 	//var dataMap map[string]string
@@ -78,6 +80,7 @@ func (c *VmClient) CreateInstances(request *vm.CreateInstancesRequest) (*vm.Crea
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("CreateInstances Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -100,6 +103,7 @@ func (c *VmClient) StopInstance(request *vm.StopInstanceRequest) (*vm.StopInstan
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("StopInstance Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -122,6 +126,7 @@ func (c *VmClient) DelInstance(request *vm.DelInstanceRequest) (*vm.DelInstanceR
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("DelInstance Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -145,6 +150,7 @@ func (c *VmClient) QueryInstancesList(request *vm.QueryInstancesRequest) (*vm.Qu
 	err = json.Unmarshal(resp, ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, err: %v", err)
+		err = fmt.Errorf("QueryInstancesList Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 
@@ -167,6 +173,7 @@ func (c *VmClient) DescribeInstance(request *vm.DescribeInstanceRequest) (*vm.De
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("DescribeInstance Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -189,6 +196,7 @@ func (c *VmClient) DescribeImage(request *vm.DescribeImageRequest) (*vm.Describe
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("DescribeImage Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
@@ -211,6 +219,7 @@ func (c *VmClient) CreateKeypair(request *vm.CreateKeypairRequest) (*vm.CreateKe
 	err = json.Unmarshal(resp, ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("CreateKeypair Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 
@@ -234,6 +243,7 @@ func (c *VmClient) DelKeypair(request *vm.DelKeypairRequest) (*vm.DelKeypairResp
 	err = json.Unmarshal(resp, ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err = fmt.Errorf("DelKeypair Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 
