@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/core"
 	vpc "github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/services/vpc/apis"
 )
@@ -52,6 +53,7 @@ func (c *VpcClient) DescribeVpc(request *vpc.DescribeVpcRequest) (*vpc.DescribeV
 	err = json.Unmarshal(resp, ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err := fmt.Errorf("DescribeVpc Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 
@@ -73,6 +75,7 @@ func (c *VpcClient) CreateVpc(request *vpc.CreateVpcRequest) (*vpc.CreateVpcResp
 	err = json.Unmarshal(resp, &ctResp)
 	if err != nil {
 		c.Logger.Log(core.LogError, "Unmarshal json failed, resp: %s", string(resp))
+		err := fmt.Errorf("CreateVpc Unmarshal json failed, resp: %s", string(resp))
 		return nil, err
 	}
 	return &ctResp, err
