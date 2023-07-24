@@ -20,9 +20,10 @@ func (s *stepCreateCTyunImage) Run(_ context.Context, state multistep.StateBag) 
 	ui.Say("Creating images")
 
 	imageSpec := vm.ImageSpec{
-		RegionId:   s.InstanceSpecConfig.RegionID,
-		InstanceId: s.InstanceSpecConfig.InstanceId,
-		ImageName:  s.InstanceSpecConfig.InstanceName,
+		RegionId:    s.InstanceSpecConfig.RegionID,
+		InstanceId:  s.InstanceSpecConfig.InstanceId,
+		ImageName:   s.InstanceSpecConfig.InstanceName,
+		Description: s.InstanceSpecConfig.Description,
 	}
 
 	req := apis.NewCreateImageRequest(imageSpec)

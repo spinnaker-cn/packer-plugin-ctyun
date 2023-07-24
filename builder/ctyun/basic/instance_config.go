@@ -32,6 +32,8 @@ type CTyunInstanceSpecConfig struct {
 	/* 镜像ID。 (true) */
 	ImageID string `mapstructure:"image_id"`
 
+	/* 镜像描述。*/
+	Description string `mapstructure:"image_description"`
 	/* 本参数表示系统盘类型 ，取值范围：SATA：普通云盘SAS：SAS云盘SSD-genric：通用SSD云盘SSD：SSD云盘。 (true) */
 	BootDiskType string `mapstructure:"boot_disk_type"`
 

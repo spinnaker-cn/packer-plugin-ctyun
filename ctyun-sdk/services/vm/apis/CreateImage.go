@@ -17,6 +17,8 @@ type CreateImageRequest struct {
 
 	/* 镜像名称 */
 	ImageName string `json:"imageName"`
+	/* 镜像描述*/
+	Description string `json:"description"`
 }
 
 /*
@@ -35,9 +37,10 @@ func NewCreateImageRequest(
 			Header:  nil,
 			Version: "v1",
 		},
-		RegionId:   imageSpec.RegionId,
-		InstanceId: imageSpec.InstanceId,
-		ImageName:  imageSpec.ImageName,
+		RegionId:    imageSpec.RegionId,
+		InstanceId:  imageSpec.InstanceId,
+		ImageName:   imageSpec.ImageName,
+		Description: imageSpec.Description,
 	}
 }
 
@@ -55,6 +58,10 @@ func (r *CreateImageRequest) SetName(name string) {
 
 func (r *CreateImageRequest) setRegionId(regionId string) {
 	r.RegionId = regionId
+}
+
+func (r *CreateImageRequest) setDescription(description string) {
+	r.Description = description
 }
 
 type CreateImageResponse struct {
