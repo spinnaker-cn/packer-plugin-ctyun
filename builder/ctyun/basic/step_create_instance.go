@@ -256,6 +256,31 @@ func (s *stepCreateCTyunInstance) Cleanup(state multistep.StateBag) {
 		} else {
 			ui.Message("Delete KeyPair On Instance Success")
 		}
+		if s.InstanceSpecConfig.InstanceId != "" {
+			reqStop := apis.NewStopInstanceRequest(Region, s.InstanceSpecConfig.InstanceId)
+			respStop, errStop := VmClient.StopInstance(reqStop)
+			if errStop != nil || respStop.StatusCode != 800 {
+				if errStop != nil || respStop.StatusCode != 800 {
+					ui.Error(fmt.Sprintf("[ERROR] Delete Instance On Instance Stop Error-%v ,Resp:%v", errStop, respStop))
+				}
+			} else {
+				_, err = InstanceStatusRefresher(s.InstanceSpecConfig.InstanceId, []string{VM_RUNNING, VM_STOPPING}, []string{VM_STOPPED})
+				if err != nil {
+					error := fmt.Errorf("Waiting For Stop Instance Status Error")
+					ui.Error(error.Error())
+				}
+
+				reqDel := apis.NewDelInstanceRequest(Region, s.InstanceSpecConfig.InstanceId, s.InstanceSpecConfig.ClientToken)
+				respDel, errDel := VmClient.DelInstance(reqDel)
+
+				if errDel != nil || respDel.StatusCode != 800 {
+					ui.Error(fmt.Sprintf("[ERROR] Delete Instance On Instance Error-%v ,Resp:%v", errDel, respDel))
+				} else {
+					ui.Message("Delete Instance On Instance Success")
+				}
+			}
+
+		}
 	}
 
 }
