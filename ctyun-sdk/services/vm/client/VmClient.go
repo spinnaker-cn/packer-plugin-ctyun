@@ -355,12 +355,12 @@ type secGroupList struct {
 }
 type networkCardList struct {
 	IPv4Address   string   `json:"iPv4Address"`
-	IPv6Address   string   `json:"iPv4Address"`
+	IPv6Address   []string `json:"iPv6Address"`
 	IsMaster      bool     `json:"isMaster"`
 	SubnetCidr    string   `json:"subnetCidr"`
 	networkCardID string   `json:"networkCardID"`
 	gateway       string   `json:"gateway"`
-	securityGroup []string `json:"gateway"`
+	securityGroup []string `json:"securityGroup"`
 	subnetID      string   `json:"subnetID"`
 }
 
