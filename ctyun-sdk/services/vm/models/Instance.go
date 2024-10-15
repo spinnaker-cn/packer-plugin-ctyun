@@ -80,7 +80,7 @@ type SecGroupList struct {
 }
 type networkCardList struct {
 	IPv4Address   string   `json:"IPv4Address"`
-	IPv6Address   string   `json:"IPv6Address"`
+	IPv6Address   []string `json:"IPv6Address"`
 	IsMaster      bool     `json:"isMaster"`
 	SubnetCidr    string   `json:"subnetCidr"`
 	networkCardID string   `json:"networkCardID"`
