@@ -71,6 +71,7 @@ func (s *stepConfigCredentials) CreateRandomKeyPair(keyName string, state multis
 	s.ui.Message("\t\t Keys created successfully :)")
 	s.InstanceSpecConfig.Comm.SSHPrivateKey = []byte(resp.ReturnObj.PrivateKey)
 	s.InstanceSpecConfig.KeyPairID = resp.ReturnObj.KeyPairID
+	s.InstanceSpecConfig.PublicKey = resp.ReturnObj.PublicKey
 	return multistep.ActionContinue
 }
 
