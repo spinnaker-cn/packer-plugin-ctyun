@@ -2,6 +2,7 @@ package basic
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/core"
 	apis "github.com/ctyun/packer-plugin-ctyun/ctyun-sdk/services/vm/apis"
@@ -9,6 +10,7 @@ import (
 	"github.com/hashicorp/packer/packer-plugin-sdk/multistep"
 	packersdk "github.com/hashicorp/packer/packer-plugin-sdk/packer"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -22,7 +24,7 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 
 	s.ui = state.Get("ui").(packersdk.Ui)
 	s.ui.Say("Creating instances")
-
+	baseUserData := concatStrings(s)
 	instanceSpec := vm.InstanceSpec{
 		AzName:          &s.CredentialConfig.Az,
 		RegionID:        &s.CredentialConfig.RegionId,
@@ -44,6 +46,7 @@ func (s *stepCreateCTyunInstance) Run(_ context.Context, state multistep.StateBa
 		RootPassword:    &s.InstanceSpecConfig.RootPassword,
 		BandWidth:       &s.InstanceSpecConfig.BandWidth,
 		SecGroupList:    &s.InstanceSpecConfig.SecGroupList,
+		UserData:        &baseUserData,
 	}
 
 	req := apis.NewCreateInstancesRequest(&instanceSpec)
@@ -233,6 +236,21 @@ func WaitForExpected(masterResourceID string) (*apis.QueryInstancesResponse, err
 	return lastResponse, fmt.Errorf("evaluate failed after %d times retry with %d seconds retry interval: %s", args.RetryTimes, int(args.RetryInterval.Seconds()), lastError)
 }
 
+/*
+ * 创建云主机新增userData字段
+ */
+func concatStrings(s *stepCreateCTyunInstance) string {
+	var result string
+
+	result += "#!/bin/bash\n"
+	result += "useradd " + s.InstanceSpecConfig.Comm.SSHUsername + "\n"
+	result += "echo \"" + s.InstanceSpecConfig.Comm.SSHUsername + "  ALL=(ALL)  NOPASSWD:ALL\" " + "| tee -a /etc/sudoers" + "\n"
+	result += "mkdir /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh\n"
+	result += "touch /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys\n"
+	result += "echo \"" + strings.ReplaceAll(s.InstanceSpecConfig.PublicKey, "\n", "") + "\" | tee -a /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys"
+	result = base64.StdEncoding.EncodeToString([]byte(result))
+	return result
+}
 func connectionError(e error) bool {
 
 	if e == nil {
