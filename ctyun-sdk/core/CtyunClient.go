@@ -27,7 +27,7 @@ func (c CtyunClient) Send(request RequestInterface) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	reqUrl := fmt.Sprintf("%s://%s/%s", c.Config.Scheme, c.Config.Endpoint, request.GetURL())
+	reqUrl := fmt.Sprintf("%s://%s%s", c.Config.Scheme, c.Config.Endpoint, request.GetURL())
 	body, err := builder.BuildBody(jsonReq)
 	if err != nil {
 		return nil, err
