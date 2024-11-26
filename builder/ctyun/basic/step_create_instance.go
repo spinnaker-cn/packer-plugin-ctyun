@@ -243,11 +243,9 @@ func concatStrings(s *stepCreateCTyunInstance) string {
 	var result string
 
 	result += "#!/bin/bash\n"
-	result += "useradd " + s.InstanceSpecConfig.Comm.SSHUsername + "\n"
-	result += "echo \"" + s.InstanceSpecConfig.Comm.SSHUsername + "  ALL=(ALL)  NOPASSWD:ALL\" " + "| tee -a /etc/sudoers" + "\n"
-	result += "mkdir /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh\n"
-	result += "touch /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys\n"
+	result += "chattr -i /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys\n"
 	result += "echo \"" + strings.ReplaceAll(s.InstanceSpecConfig.PublicKey, "\n", "") + "\" | tee -a /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys"
+	result += "chattr +i /home/" + s.InstanceSpecConfig.Comm.SSHUsername + "/.ssh/authorized_keys\n"
 	result = base64.StdEncoding.EncodeToString([]byte(result))
 	return result
 }

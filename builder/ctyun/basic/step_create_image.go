@@ -127,7 +127,7 @@ func (s *stepCreateCTyunImage) Cleanup(state multistep.StateBag) {
 	respDel, errDel := VmClient.DelInstance(reqDel)
 
 	if errDel != nil || respDel.StatusCode != 800 {
-		ui.Error(fmt.Sprintf("[ERROR] Delete Instance On Image Error-%v ,Resp:%v", err, resp))
+		ui.Error(fmt.Sprintf("[ERROR] Delete Instance On Image Error-%v ,Resp:%v", errDel, respDel))
 	} else {
 		ui.Message("Delete Instance On Image Success")
 	}
