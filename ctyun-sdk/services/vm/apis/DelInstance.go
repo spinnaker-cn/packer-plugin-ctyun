@@ -31,7 +31,7 @@ func NewDelInstanceRequest(
 
 	return &DelInstanceRequest{
 		CtyunRequest: core.CtyunRequest{
-			URL:     "v4/ecs/unsubscribe-instance",
+			URL:     "/v4/ecs/unsubscribe-instance",
 			Method:  "POST",
 			Header:  nil,
 			Version: "v1",
